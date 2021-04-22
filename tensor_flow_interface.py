@@ -39,11 +39,13 @@ class TensorFlowInterface:
         if layerType == 'Dense':
             self.model.add(layers.Dense(numberOfNeurons, activation=activation))
         elif layerType == 'MaxPooling2D':
-            self.model.add(layers.MaxPooling2D(numberOfNeurons, activation=activation))
-        elif layerType == 'Dropout':
-            self.model.add(layers.Dropout(numberOfNeurons, activation=activation))
+            self.model.add(layers.MaxPooling2D(numberOfNeurons))
+        elif layerType == 'Conv2D':
+            #self.model.add(64, layers.Conv2D(numberOfNeurons, numberOfNeurons), activation=activation)
+            self.model.add(Conv2D(kernel_size=64, activation=activation))
+
         elif layerType == 'Flatten':
-            self.model.add(layers.Flatten(numberOfNeurons, activation=activation))
+            self.model.add(layers.Flatten())
         elif layerType == 'Activation':
             self.model.add(layers.Activation(numberOfNeurons, activation=activation))
 
