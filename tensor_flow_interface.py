@@ -6,6 +6,19 @@ from tensorflow import keras
 import tensorflow as tf
 from keras import layers
 
+class ModelDataContainer:
+    numberOfLayers = None
+    listOfLayerNeurons = None
+    listOfLayerTypes = None
+    listOfActivations = None
+
+    def __init__(self, numberOfLayers:int, listOfLayerNeurons:list[int], listOfLayerTypes:list[str], listOfActivations:list[str]):
+        self.numberOfLayers = numberOfLayers
+        self.listOfLayerNeurons = listOfLayerNeurons
+        self.listOfLayerTypes = listOfLayerTypes
+        self.listOfActivations = listOfActivations
+
+
 
 class TensorFlowInterface:
     model = None
@@ -13,16 +26,13 @@ class TensorFlowInterface:
     def __init__(self):
         pass
 
-    def create_model(self, numberOfLayers:int, listOfLayerNeurons:list[int], listOfLayerTypes:list[str], listOfActivations:list[str]):
+    def create_model(self, modelData:ModelDataContainer):
 
         self.model = models.Sequential()
-        self.model.add(layers.InputLayer(listOfLayerNeurons[0],))
-        for i in range(1, numberOfLayers):
-            self._layer_type_selector(listOfLayerTypes[i], listOfLayerNeurons[i], listOfActivations[i])
+        self.model.add(layers.InputLayer(modelData.listOfLayerNeurons[0],))
+        for i in range(1, modelData.numberOfLayers):
+            self._layer_type_selector(modelData.listOfLayerTypes[i], modelData.listOfLayerNeurons[i], modelData.listOfActivations[i])
 
-        # model.add(layers.Dense(3, activation="linear"))
-        # model.add(layers.Dense(3, activation="relu"))
-        # model.add(layers.Dense(1))
         visualizer(self.model, filename='graph', format='png', view=False)
 
     def _layer_type_selector(self, layerType, numberOfNeurons, activation):
@@ -36,5 +46,6 @@ class TensorFlowInterface:
             self.model.add(layers.Flatten(numberOfNeurons, activation=activation))
         elif layerType == 'Activation':
             self.model.add(layers.Activation(numberOfNeurons, activation=activation))
+
 
 

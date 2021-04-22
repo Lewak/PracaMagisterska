@@ -3,6 +3,7 @@ from dearpygui import core, simple
 from generic_window import GenericWindow
 from visualization_window import VisualizationWindow
 from tensor_flow_interface import TensorFlowInterface
+from tensor_flow_interface import ModelDataContainer
 
 
 class SettingsWindow(GenericWindow):
@@ -30,10 +31,9 @@ class SettingsWindow(GenericWindow):
         self.visualization_window.hide_window()
 
         self.tensorFlowInterface = TensorFlowInterface()
-        temp = self.return_selected_neuron_lists()
-        self.tensorFlowInterface.create_model(temp[0], temp[1], temp[2], temp[3])
+        self.tensorFlowInterface.create_model(self.return_selected_neuron_lists())
 
-    def return_selected_neuron_lists(self) -> list[int, list[int], list[str], list[str]]:
+    def return_selected_neuron_lists(self) -> ModelDataContainer:
         listOfNeuronsInLayer = []
         listOfLayerTypes = []
         listOfLayerActivations = []
@@ -41,14 +41,14 @@ class SettingsWindow(GenericWindow):
             listOfNeuronsInLayer.append(core.get_value(self.layer + str(i)))
             listOfLayerTypes.append('Dense')
             listOfLayerActivations.append('relu')
-        return [core.get_value(self.numberOfLayers), listOfNeuronsInLayer, listOfLayerTypes, listOfLayerActivations]
+        neuronDataContainer = ModelDataContainer(core.get_value(self.numberOfLayers), listOfNeuronsInLayer, listOfLayerTypes, listOfLayerActivations)
+        return neuronDataContainer
             
     def create_network_callback(self):
         print(core.get_value(self.numberOfLayers))
 
     def create_visualisation_callback(self, sender, data):
-        temp = self.return_selected_neuron_lists()
-        self.tensorFlowInterface.create_model(temp[0], temp[1], temp[2], temp[3])
+        self.tensorFlowInterface.create_model(self.return_selected_neuron_lists())
         self.visualization_window.show_window()
         self.visualization_window.update_picture()
         pass
