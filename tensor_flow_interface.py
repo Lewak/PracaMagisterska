@@ -47,7 +47,7 @@ class TensorFlowInterface:
         elif layerType == 'Flatten':
             self.model.add(layers.Flatten())
         elif layerType == 'Activation':
-            self.model.add(layers.Activation(numberOfNeurons, activation=activation))
+            self.model.add(layers.Activation(activation=activation))
 
 
 

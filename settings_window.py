@@ -13,7 +13,6 @@ class SettingsWindow(GenericWindow):
     createVisualization = "Stworz wizualizacje"
     numberOfLayers = "Ilosc warstw"
     layer = "Warstwa "
-    select = "Wybierz"
     type = "Typ"
     activation = "Aktywacja"
     neuronTypeList = ['Dense', 'MaxPooling2D', 'Conv2D', 'Flatten', 'Activation']
@@ -28,7 +27,7 @@ class SettingsWindow(GenericWindow):
 
     def __init__(self):
 
-        with simple.window(self.window):
+        with simple.window(self.window, width=600, height=300):
             core.add_text(self.simulationSetting)
             core.add_button(self.createNetwork, callback=self.create_network_callback)
             core.add_button(self.createVisualization, callback=self.create_visualisation_callback)
@@ -36,14 +35,12 @@ class SettingsWindow(GenericWindow):
             for i in range(0, 8):
                 core.add_slider_int(self.layer + str(i), default_value=1, width = 200)
                 core.add_same_line()
-                core.add_button(self.select +"##"+ str(i), callback=self.button_selector)
+                core.add_combo(self.type +'##'+ str(i), items=self.neuronTypeList, width=70, callback = self.change_list_callback, default_value='Dense')
+                core.add_same_line()
+                core.add_combo(self.activation +'##'+ str(i), items=self.neuronActivationList, width = 70, callback=self.change_list_callback, default_value='relu')
+
             core.add_separator()
-            core.add_listbox(self.type, items=self.neuronTypeList, width = 70, callback = self.change_list_callback)
-            core.add_same_line()
-            core.add_listbox(self.activation, items=self.neuronActivationList, width = 70, callback = self.change_list_callback)
-
             self.layer_slider_callback()
-
 
         self.visualization_window = VisualizationWindow()
         self.visualization_window.hide_window()
@@ -53,18 +50,11 @@ class SettingsWindow(GenericWindow):
         self.tensorFlowInterface = TensorFlowInterface()
         self.tensorFlowInterface.create_model(self.neuronDataContainer)
 
-
     def modify_neuron_list(self):
-        # listOfNeuronsInLayer = []
-        # listOfLayerTypes = []
-        # listOfLayerActivations = []
+
         self.neuronDataContainer.numberOfLayers = core.get_value(self.numberOfLayers)
         for i in range(0, core.get_value(self.numberOfLayers)):
             self.neuronDataContainer.listOfLayerNeurons[i] = core.get_value(self.layer + str(i))
-
-        # self.neuronDataContainer.listOfLayerNeurons = listOfNeuronsInLayer
-        # self.neuronDataContainer.listOfLayerTypes = listOfLayerTypes
-        # self.neuronDataContainer. listOfActivations = listOfLayerActivations
 
     def create_network_callback(self):
         print(core.get_value(self.numberOfLayers))
@@ -75,27 +65,21 @@ class SettingsWindow(GenericWindow):
         self.visualization_window.show_window()
         self.visualization_window.update_picture()
 
-
-
     def layer_slider_callback(self):
         for i in range(0, 8):
             simple.hide_item(self.layer + str(i))
-            simple.hide_item(self.select + "##" + str(i))
+            simple.hide_item(self.type + '##' + str(i))
+            simple.hide_item(self.activation + '##' + str(i))
+
         for i in range(0, core.get_value(self.numberOfLayers)):
             simple.show_item(self.layer + str(i))
-            simple.show_item(self.select + "##" + str(i))
-
-    def button_selector(self, sender, data):
-        self.lastChosenNeuronSelectButton = int(sender[-1])
+            simple.show_item(self.type + '##' + str(i))
+            simple.show_item(self.activation + '##' + str(i))
 
     def change_list_callback(self, sender, data):
-        if sender == self.type:
-            print(self.lastChosenNeuronSelectButton, self.neuronTypeList[core.get_value(sender)])
-            self.neuronDataContainer.listOfLayerTypes[self.lastChosenNeuronSelectButton] = self.neuronTypeList[core.get_value(sender)]
-            print(self.neuronDataContainer.listOfLayerTypes)
-        if sender == self.activation:
-            self.neuronDataContainer.listOfActivations[self.lastChosenNeuronSelectButton] = self.neuronActivationList[core.get_value(sender)]
-            print(self.lastChosenNeuronSelectButton, self.neuronActivationList[core.get_value(sender)])
-            print(self.neuronDataContainer.listOfActivations)
+        if sender[0:len(self.type)] == self.type:
+            self.neuronDataContainer.listOfLayerTypes[int(sender[-1])] = core.get_value(sender)
+        if sender[0:len(self.activation)] == self.activation:
+            self.neuronDataContainer.listOfActivations[int(sender[-1])] = core.get_value(sender)
 
 
