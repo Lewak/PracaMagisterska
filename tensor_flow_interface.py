@@ -43,7 +43,6 @@ class TensorFlowInterface:
         elif layerType == 'Conv2D':
             #self.model.add(64, layers.Conv2D(numberOfNeurons, numberOfNeurons), activation=activation)
             self.model.add(Conv2D(kernel_size=64, activation=activation))
-
         elif layerType == 'Flatten':
             self.model.add(layers.Flatten())
         elif layerType == 'Activation':

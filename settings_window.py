@@ -22,8 +22,7 @@ class SettingsWindow(GenericWindow):
     tensorFlowInterface = None
     neuronDataContainer = None
     neuronDataContainerDefaultData = [2, [1,1,1,1,1,1,1,1], ['Dense', 'Dense','Dense', 'Dense','Dense', 'Dense','Dense', 'Dense'], ['relu', 'relu','relu', 'relu','relu', 'relu','relu', 'relu']]
-
-    lastChosenNeuronSelectButton = 0
+    maxNumberOfLayers = 8
 
     def __init__(self):
 
@@ -31,8 +30,8 @@ class SettingsWindow(GenericWindow):
             core.add_text(self.simulationSetting)
             core.add_button(self.createNetwork, callback=self.create_network_callback)
             core.add_button(self.createVisualization, callback=self.create_visualisation_callback)
-            core.add_slider_int(self.numberOfLayers, default_value=2, min_value=2, max_value=8, callback=self.layer_slider_callback,  width = 200)
-            for i in range(0, 8):
+            core.add_slider_int(self.numberOfLayers, default_value=2, min_value=2, max_value=self.maxNumberOfLayers, callback=self.layer_slider_callback,  width = 200)
+            for i in range(0, self.maxNumberOfLayers):
                 core.add_slider_int(self.layer + str(i), default_value=1, width = 200)
                 core.add_same_line()
                 core.add_combo(self.type +'##'+ str(i), items=self.neuronTypeList, width=70, callback = self.change_list_callback, default_value='Dense')
@@ -66,7 +65,7 @@ class SettingsWindow(GenericWindow):
         self.visualization_window.update_picture()
 
     def layer_slider_callback(self):
-        for i in range(0, 8):
+        for i in range(0, self.maxNumberOfLayers):
             simple.hide_item(self.layer + str(i))
             simple.hide_item(self.type + '##' + str(i))
             simple.hide_item(self.activation + '##' + str(i))

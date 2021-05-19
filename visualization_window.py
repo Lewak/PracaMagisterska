@@ -2,7 +2,6 @@
 from dearpygui import core, simple
 from generic_window import GenericWindow
 
-
 class VisualizationWindow(GenericWindow):
     windowName = "Wizualizacja"
     pictureName = "test1"
