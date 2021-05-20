@@ -15,6 +15,7 @@ class ImportWindow(GenericWindow):
     dataY2 = []
     dataParsedX = []
     dataParsedY = []
+    dataParsedIn = [[]]
     dataParsedOut = []
     importedFilePath = None
     importedFileName = None
@@ -35,20 +36,32 @@ class ImportWindow(GenericWindow):
 
 
     def import_file(self, sender, data):
+        print('resetuje')
+        self.dataParsedIn = [[]]
+        self.dataParsedOut = []
         core.set_value(self.fileStatus, self.fileFound + str(data[1]))
-        self.importedFile = open(data[0] +'//'+ data[1])
+        self.importedFile = open(data[0] + '//' + data[1])
         self.importedFile = self.importedFile.readlines()
+        for element in self.importedFile[0][:-1]:
+            self.dataParsedIn.append([])
+
         for line in range(len(self.importedFile)):
+            self.dataParsedIn.append([])
             self.importedFile[line] = self.importedFile[line].split()
-            if self.importedFile[line][2] == '0':
+            for element in range(len(self.importedFile[line][:-1])):
+                self.dataParsedIn[element].append(float(self.importedFile[line][element]))
+            self.dataParsedOut.append(float(self.importedFile[line][-1]))
+
+            if self.importedFile[line][-1] == '0':
                 self.dataX1.append(float(self.importedFile[line][0]))
                 self.dataY1.append(float(self.importedFile[line][1]))
             else:
                 self.dataX2.append(float(self.importedFile[line][0]))
                 self.dataY2.append(float(self.importedFile[line][1]))
-            self.dataParsedX.append(float(self.importedFile[line][0]))
-            self.dataParsedY.append(float(self.importedFile[line][1]))
-            self.dataParsedOut.append(float(self.importedFile[line][2]))
 
-        core.add_scatter_series(self.plotName,name="1", x=self.dataX1, y=self.dataY1, update_bounds=True)
-        core.add_scatter_series(self.plotName,name="2", x=self.dataX2, y=self.dataY2, update_bounds=True)
+        self.display_graph()
+
+    def display_graph(self):
+        core.add_scatter_series(self.plotName,name="0", x=self.dataX1, y=self.dataY1, update_bounds=True)
+        core.add_scatter_series(self.plotName,name="1", x=self.dataX2, y=self.dataY2, update_bounds=True)
+        core.add_heat_series()
