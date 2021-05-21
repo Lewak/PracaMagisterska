@@ -1,10 +1,12 @@
 #dada
-from keras import models
-from keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Activation
+import keras
+from tensorflow.keras import models
+from tensorflow.keras import backend
+from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Activation
 from keras_visualizer import visualizer
 from tensorflow import keras
 import tensorflow as tf
-from keras import layers
+from tensorflow.keras import layers
 import numpy
 
 
@@ -34,9 +36,12 @@ class TensorFlowInterface:
 
         self.model = models.Sequential()
         self.model.add(layers.InputLayer(modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2))
+       # self.model.add(keras.Input(shape=(modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2), ))
+        #self.model.add(models.Input(shape=((modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2),)))
+
         for i in range(1, modelData.numberOfLayers-1):
             self._layer_type_selector(modelData.listOfLayerTypes[i], modelData.listOfLayerNeurons[i], modelData.listOfActivations[i])
-        self.model.add(layers.Dense(modelData.listOfLayerNeurons[modelData.numberOfLayers] if not isDefaultInOut else 1, activation='sigmoid'))
+        self.model.add(layers.Dense((modelData.listOfLayerNeurons[modelData.numberOfLayers-1] if not isDefaultInOut else 1),activation=modelData.listOfActivations[modelData.numberOfLayers-1]))
 
         visualizer(self.model, filename='graph', format='png', view=False)
 
@@ -67,3 +72,6 @@ class TensorFlowInterface:
     def predict_value(self, dataIn:[float]) -> float:
 
         return self.model.predict_classes(dataIn, batch_size=len(dataIn))
+
+    def remove_model(self):
+        backend.clear_session()

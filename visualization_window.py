@@ -23,3 +23,6 @@ class VisualizationWindow(GenericWindow):
         core.render_dearpygui_frame()
         self.window_resize()
 
+    def update_alternative(self):
+        core.clear_drawing(self.pictureName)
+        self.window_resize()

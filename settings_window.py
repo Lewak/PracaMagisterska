@@ -7,7 +7,6 @@ from tensor_flow_interface import ModelDataContainer
 from import_window import ImportWindow
 from output_visualisation_window import OutputVisualisationWindow
 
-
 class SettingsWindow(GenericWindow):
     window = "Ustawienia sieci"
     simulationSetting = "Ustawienia symulacji"
@@ -70,10 +69,15 @@ class SettingsWindow(GenericWindow):
         print(core.get_value(self.numberOfLayers))
 
     def create_visualisation_callback(self, sender, data):
+        self.tensorFlowInterface.remove_model()
         self.modify_neuron_list()
         self.tensorFlowInterface.create_model(self.neuronDataContainer, core.get_value(self.use2DInOut))
-        self.visualization_window.show_window()
-        self.visualization_window.update_picture()
+
+        if self.visualization_window.hidden:
+            self.visualization_window.show_window()
+            self.visualization_window.update_picture()
+        else:
+            self.visualization_window.update_alternative() #to jest durne, ale bez tego mam błąd którego nie da się zdebugować.
 
     def layer_slider_callback(self):
         for i in range(0, self.maxNumberOfLayers):

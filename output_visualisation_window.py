@@ -14,11 +14,10 @@ class OutputVisualisationWindow(GenericWindow):
 
 
     def create_output_graph(self, model:TensorFlowInterface):
-        size = 100
+        size = 300
         dataOut = []
         outputList = []
         for i in range(size):
-            print(i)
             for j in range(size):
                 x = -8.0 + i * 16.0 / size
                 y = -8.0 + j * 16.0 / size
