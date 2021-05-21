@@ -5,13 +5,15 @@ from visualization_window import VisualizationWindow
 from tensor_flow_interface import TensorFlowInterface
 from tensor_flow_interface import ModelDataContainer
 from import_window import ImportWindow
+from output_visualisation_window import OutputVisualisationWindow
 
 
 class SettingsWindow(GenericWindow):
     window = "Ustawienia sieci"
     simulationSetting = "Ustawienia symulacji"
     createNetwork = "Stworz siec"
-    createVisualization = "Stworz wizualizacje"
+    createVisualization = "Stworz wizualizacje sieci"
+    createOutputPrediction = 'Stworz wykres wyjsciowy'
     numberOfLayers = "Ilosc warstw"
     layer = "Warstwa "
     type = "Typ"
@@ -28,12 +30,16 @@ class SettingsWindow(GenericWindow):
     setDefaultInOut = False
 
     def __init__(self):
+        self.tensorFlowInterface = TensorFlowInterface()
+        self.outputVisualisationWindow = OutputVisualisationWindow()
 
         with simple.window(self.window, width=600, height=300):
             core.add_text(self.simulationSetting)
             core.add_button(self.createNetwork, callback=self.create_network_callback)
             core.add_same_line()
             core.add_button(self.createVisualization, callback=self.create_visualisation_callback)
+            core.add_same_line()
+            core.add_button(self.createOutputPrediction, callback=self.create_output_prediction)
             core.add_button(self.trainData, callback=self.execute_training_data)
             core.add_same_line()
             core.add_checkbox(self.use2DInOut)
@@ -53,12 +59,9 @@ class SettingsWindow(GenericWindow):
         self.importWindow = ImportWindow()
         self.neuronDataContainer = ModelDataContainer(self.neuronDataContainerDefaultData[0],self.neuronDataContainerDefaultData[1], self.neuronDataContainerDefaultData[2], self.neuronDataContainerDefaultData[3])
         self.modify_neuron_list()
-        self.tensorFlowInterface = TensorFlowInterface()
         self.tensorFlowInterface.create_model(self.neuronDataContainer, core.get_value(self.use2DInOut))
 
     def modify_neuron_list(self):
-
-
         self.neuronDataContainer.numberOfLayers = core.get_value(self.numberOfLayers)
         for i in range(0, core.get_value(self.numberOfLayers)):
             self.neuronDataContainer.listOfLayerNeurons[i] = core.get_value(self.layer + str(i))
@@ -93,4 +96,5 @@ class SettingsWindow(GenericWindow):
         self.tensorFlowInterface.train_model_on_2D_data(self.importWindow.dataParsedIn, self.importWindow.dataParsedOut)
 
 
-
+    def create_output_prediction(self):
+        self.outputVisualisationWindow.create_output_graph(self.tensorFlowInterface)

@@ -1,7 +1,6 @@
 from generic_window import GenericWindow
 from dearpygui import core, simple
 
-
 class ImportWindow(GenericWindow):
     windowName = 'Importuj plik'
     importButtonName = 'Otwórz'
@@ -13,8 +12,6 @@ class ImportWindow(GenericWindow):
     dataY1 = []
     dataX2 = []
     dataY2 = []
-    dataParsedX = []
-    dataParsedY = []
     dataParsedIn = [[]]
     dataParsedOut = []
     importedFilePath = None
@@ -34,9 +31,7 @@ class ImportWindow(GenericWindow):
     def open_file_dialog(self):
         core.open_file_dialog(callback=self.import_file)
 
-
     def import_file(self, sender, data):
-        print('resetuje')
         self.dataParsedIn = [[]]
         self.dataParsedOut = []
         core.set_value(self.fileStatus, self.fileFound + str(data[1]))
@@ -64,4 +59,3 @@ class ImportWindow(GenericWindow):
     def display_graph(self):
         core.add_scatter_series(self.plotName,name="0", x=self.dataX1, y=self.dataY1, update_bounds=True)
         core.add_scatter_series(self.plotName,name="1", x=self.dataX2, y=self.dataY2, update_bounds=True)
-        core.add_heat_series()

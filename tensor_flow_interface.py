@@ -7,6 +7,7 @@ import tensorflow as tf
 from keras import layers
 import numpy
 
+
 class ModelDataContainer:
     numberOfLayers = None
     listOfLayerNeurons = None
@@ -24,6 +25,8 @@ class ModelDataContainer:
 class TensorFlowInterface:
     model = None
     dumpedTrainedDataHistory = None
+    Xnew = None
+
     def __init__(self):
         pass
 
@@ -57,6 +60,10 @@ class TensorFlowInterface:
             print(trainDataIn)
             mergedInputArray = numpy.stack([trainDataIn[0], trainDataIn[1]], axis=1)
             mergedOutputArray = numpy.array(trainDataOut)
-            self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=150, batch_size=10)
+            self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=500)
             accuracy = self.model.evaluate(x=mergedInputArray, y=mergedOutputArray)
-            print((self.dumpedTrainedDataHistory.history))
+            #print((self.dumpedTrainedDataHistory.history))
+
+    def predict_value(self, dataIn:[float]) -> float:
+
+        return self.model.predict_classes(dataIn, batch_size=len(dataIn))
