@@ -32,6 +32,7 @@ class ImportWindow(GenericWindow):
         core.open_file_dialog(callback=self.import_file)
 
     def import_file(self, sender, data):
+        self.dataX1, self.dataX2, self.dataY1, self.dataY2 = [], [], [], []
         self.dataParsedIn = [[]]
         self.dataParsedOut = []
         core.set_value(self.fileStatus, self.fileFound + str(data[1]))
@@ -57,5 +58,6 @@ class ImportWindow(GenericWindow):
         self.display_graph()
 
     def display_graph(self):
+        core.clear_plot(self.plotName)
         core.add_scatter_series(self.plotName,name="0", x=self.dataX1, y=self.dataY1, update_bounds=True)
         core.add_scatter_series(self.plotName,name="1", x=self.dataX2, y=self.dataY2, update_bounds=True)

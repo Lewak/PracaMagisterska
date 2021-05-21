@@ -21,7 +21,7 @@ class OutputVisualisationWindow(GenericWindow):
             for j in range(size):
                 x = -8.0 + i * 16.0 / size
                 y = -8.0 + j * 16.0 / size
-                dataOut.append([x,y])
+                dataOut.append([y,x])
                 outputList.append([i,j])
         temp = model.predict_value(dataOut)
         temp2 = []
