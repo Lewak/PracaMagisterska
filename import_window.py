@@ -48,7 +48,7 @@ class ImportWindow(GenericWindow):
                 self.dataParsedIn[element].append(float(self.importedFile[line][element]))
             self.dataParsedOut.append(float(self.importedFile[line][-1]))
 
-            if self.importedFile[line][-1] == '0':
+            if float(self.importedFile[line][-1]) >= 0.5:
                 self.dataX1.append(float(self.importedFile[line][0]))
                 self.dataY1.append(float(self.importedFile[line][1]))
             else:
@@ -59,5 +59,5 @@ class ImportWindow(GenericWindow):
 
     def display_graph(self):
         core.clear_plot(self.plotName)
-        core.add_scatter_series(self.plotName,name="0", x=self.dataX1, y=self.dataY1, update_bounds=True)
-        core.add_scatter_series(self.plotName,name="1", x=self.dataX2, y=self.dataY2, update_bounds=True)
+        core.add_scatter_series(self.plotName,name="0", x=self.dataX2, y=self.dataY2, update_bounds=True)
+        core.add_scatter_series(self.plotName,name="1", x=self.dataX1, y=self.dataY1, update_bounds=True)

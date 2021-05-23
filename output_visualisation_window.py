@@ -17,15 +17,16 @@ class OutputVisualisationWindow(GenericWindow):
         size = 300
         dataOut = []
         outputList = []
-        for i in range(size):
-            for j in range(size):
+        for j in range(size):
+            for i in range(size):
                 x = -8.0 + i * 16.0 / size
                 y = -8.0 + j * 16.0 / size
-                dataOut.append([y,x])
+                dataOut.append([x,-y])
                 outputList.append([i,j])
         temp = model.predict_value(dataOut)
         temp2 = []
         for i in range(len(dataOut)):
             outputList[i].append(temp[i][0])
             temp2.append(temp[i][0])
-        core.add_heat_series(self.plotName,name = self.seriesName, values=temp2, rows=size, columns=size, scale_min=0, scale_max=1, format='')
+
+        core.add_heat_series(self.plotName,name = self.seriesName, values=temp2, rows=size, columns=size, scale_min=0.0, scale_max=1.0, format='')

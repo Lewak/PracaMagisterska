@@ -6,6 +6,7 @@ from tensor_flow_interface import TensorFlowInterface
 from tensor_flow_interface import ModelDataContainer
 from import_window import ImportWindow
 from output_visualisation_window import OutputVisualisationWindow
+from better_visualizer import BetterVisualizer
 
 class SettingsWindow(GenericWindow):
     window = "Ustawienia sieci"
@@ -24,9 +25,9 @@ class SettingsWindow(GenericWindow):
     visualization_window = None
     tensorFlowInterface = None
     neuronDataContainer = None
+    betterVisualizer = None
     neuronDataContainerDefaultData = [2, [1,1,1,1,1,1,1,1], ['Dense', 'Dense','Dense', 'Dense','Dense', 'Dense','Dense', 'Dense'], ['relu', 'relu','relu', 'relu','relu', 'relu','relu', 'relu']]
     maxNumberOfLayers = 8
-    setDefaultInOut = False
 
     def __init__(self):
         self.tensorFlowInterface = TensorFlowInterface()
@@ -53,17 +54,22 @@ class SettingsWindow(GenericWindow):
             core.add_separator()
             self.layer_slider_callback()
 
-        self.visualization_window = VisualizationWindow()
-        self.visualization_window.hide_window()
+        #self.visualization_window = VisualizationWindow()
+        self.betterVisualizer = BetterVisualizer()
+        self.betterVisualizer.hide_window()
         self.importWindow = ImportWindow()
         self.neuronDataContainer = ModelDataContainer(self.neuronDataContainerDefaultData[0],self.neuronDataContainerDefaultData[1], self.neuronDataContainerDefaultData[2], self.neuronDataContainerDefaultData[3])
         self.modify_neuron_list()
-        self.tensorFlowInterface.create_model(self.neuronDataContainer, core.get_value(self.use2DInOut))
+        self.tensorFlowInterface.create_model(self.neuronDataContainer)
 
     def modify_neuron_list(self):
         self.neuronDataContainer.numberOfLayers = core.get_value(self.numberOfLayers)
         for i in range(0, core.get_value(self.numberOfLayers)):
             self.neuronDataContainer.listOfLayerNeurons[i] = core.get_value(self.layer + str(i))
+
+    def setDefaultInOut(self):
+        self.neuronDataContainer.listOfLayerNeurons[0] = 2
+        self.neuronDataContainer.listOfLayerNeurons[self.neuronDataContainer.numberOfLayers-1] = 1
 
     def create_network_callback(self):
         print(core.get_value(self.numberOfLayers))
@@ -71,13 +77,17 @@ class SettingsWindow(GenericWindow):
     def create_visualisation_callback(self, sender, data):
         self.tensorFlowInterface.remove_model()
         self.modify_neuron_list()
-        self.tensorFlowInterface.create_model(self.neuronDataContainer, core.get_value(self.use2DInOut))
+        if core.get_value(self.use2DInOut):
+            self.setDefaultInOut()
+        self.tensorFlowInterface.create_model(self.neuronDataContainer)
+        self.betterVisualizer.show_window()
+        self.betterVisualizer.getContainerData(self.neuronDataContainer)
+        self.betterVisualizer.window_resize()
 
-        if self.visualization_window.hidden:
-            self.visualization_window.show_window()
-            self.visualization_window.update_picture()
-        else:
-            self.visualization_window.update_alternative() #to jest durne, ale bez tego mam błąd którego nie da się zdebugować.
+        #     self.visualization_window.show_window()
+        #     self.visualization_window.update_picture()
+        # else:
+        #     self.visualization_window.update_alternative() #to jest durne, ale bez tego mam błąd którego nie da się zdebugować.
 
     def layer_slider_callback(self):
         for i in range(0, self.maxNumberOfLayers):
@@ -102,3 +112,4 @@ class SettingsWindow(GenericWindow):
 
     def create_output_prediction(self):
         self.outputVisualisationWindow.create_output_graph(self.tensorFlowInterface)
+

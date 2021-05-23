@@ -32,16 +32,13 @@ class TensorFlowInterface:
     def __init__(self):
         pass
 
-    def create_model(self, modelData:ModelDataContainer, isDefaultInOut):
+    def create_model(self, modelData:ModelDataContainer):
 
         self.model = models.Sequential()
-        self.model.add(layers.InputLayer(modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2))
-       # self.model.add(keras.Input(shape=(modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2), ))
-        #self.model.add(models.Input(shape=((modelData.listOfLayerNeurons[0] if not isDefaultInOut else 2),)))
-
+        self.model.add(layers.InputLayer(modelData.listOfLayerNeurons[0]))
         for i in range(1, modelData.numberOfLayers-1):
             self._layer_type_selector(modelData.listOfLayerTypes[i], modelData.listOfLayerNeurons[i], modelData.listOfActivations[i])
-        self.model.add(layers.Dense((modelData.listOfLayerNeurons[modelData.numberOfLayers-1] if not isDefaultInOut else 1),activation=modelData.listOfActivations[modelData.numberOfLayers-1]))
+        self.model.add(layers.Dense((modelData.listOfLayerNeurons[modelData.numberOfLayers-1]) ,activation=modelData.listOfActivations[modelData.numberOfLayers-1]))
 
         visualizer(self.model, filename='graph', format='png', view=False)
 
@@ -62,16 +59,15 @@ class TensorFlowInterface:
             return None
         else:
             self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-            print(trainDataIn)
             mergedInputArray = numpy.stack([trainDataIn[0], trainDataIn[1]], axis=1)
             mergedOutputArray = numpy.array(trainDataOut)
             self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=500)
             accuracy = self.model.evaluate(x=mergedInputArray, y=mergedOutputArray)
-            #print((self.dumpedTrainedDataHistory.history))
+            print((self.dumpedTrainedDataHistory.history))
 
     def predict_value(self, dataIn:[float]) -> float:
-
-        return self.model.predict_classes(dataIn, batch_size=len(dataIn))
+        x = self.model.predict(dataIn, batch_size=len(dataIn))
+        return x
 
     def remove_model(self):
         backend.clear_session()

@@ -1,4 +1,3 @@
-#dada
 from dearpygui import core, simple
 from generic_window import GenericWindow
 
