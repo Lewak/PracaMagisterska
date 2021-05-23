@@ -40,19 +40,19 @@ class TensorFlowInterface:
             self._layer_type_selector(modelData.listOfLayerTypes[i], modelData.listOfLayerNeurons[i], modelData.listOfActivations[i])
         self.model.add(layers.Dense((modelData.listOfLayerNeurons[modelData.numberOfLayers-1]) ,activation=modelData.listOfActivations[modelData.numberOfLayers-1]))
 
-        visualizer(self.model, filename='graph', format='png', view=False)
+        #visualizer(self.model, filename='graph', format='png', view=False)
 
     def _layer_type_selector(self, layerType, numberOfNeurons, activation):
         if layerType == 'Dense':
             self.model.add(layers.Dense(numberOfNeurons, activation=activation))
-        elif layerType == 'MaxPooling2D':
-            self.model.add(layers.MaxPooling2D(numberOfNeurons))
-        elif layerType == 'Conv2D':
-            self.model.add(Conv2D(kernel_size=64, activation=activation))
         elif layerType == 'Flatten':
             self.model.add(layers.Flatten())
         elif layerType == 'Activation':
             self.model.add(layers.Activation(activation=activation))
+        # elif layerType == 'MaxPooling2D':
+        #     self.model.add(layers.MaxPooling2D(numberOfNeurons))
+        # elif layerType == 'Conv2D':
+        #     self.model.add(Conv2D(kernel_size=64, activation=activation))
 
     def train_model_on_2D_data(self, trainDataIn, trainDataOut):
         if self.model is None:

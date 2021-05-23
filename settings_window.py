@@ -20,7 +20,7 @@ class SettingsWindow(GenericWindow):
     use2DInOut  = 'Uzyj domyslnych wejsc/wyjsc'
     activation = "Aktywacja"
     trainData = "Trenuj siec"
-    neuronTypeList = ['Dense', 'MaxPooling2D', 'Conv2D', 'Flatten', 'Activation']
+    neuronTypeList = ['Dense', 'Flatten', 'Activation']
     neuronActivationList = ['relu', 'sigmoid', 'softmax', 'softplus', 'exponential']
     visualization_window = None
     tensorFlowInterface = None
@@ -80,8 +80,13 @@ class SettingsWindow(GenericWindow):
         if core.get_value(self.use2DInOut):
             self.setDefaultInOut()
         self.tensorFlowInterface.create_model(self.neuronDataContainer)
-        self.betterVisualizer.show_window()
         self.betterVisualizer.getContainerData(self.neuronDataContainer)
+        if (self.betterVisualizer.hidden):
+            self.betterVisualizer.show_window()
+            self.betterVisualizer.window_resize()
+            core.render_dearpygui_frame()
+            self.betterVisualizer.draw_visualisation()
+
         self.betterVisualizer.window_resize()
 
         #     self.visualization_window.show_window()
