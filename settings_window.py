@@ -7,6 +7,7 @@ from tensor_flow_interface import ModelDataContainer
 from import_window import ImportWindow
 from output_visualisation_window import OutputVisualisationWindow
 from better_visualizer import BetterVisualizer
+from history_graph_window import HistoryGraphWindow
 
 class SettingsWindow(GenericWindow):
     window = "Ustawienia sieci"
@@ -20,18 +21,23 @@ class SettingsWindow(GenericWindow):
     use2DInOut  = 'Uzyj domyslnych wejsc/wyjsc'
     activation = "Aktywacja"
     trainData = "Trenuj siec"
+    historyGraph = "Rysuj graf historii"
     neuronTypeList = ['Dense', 'Flatten', 'Activation']
     neuronActivationList = ['relu', 'sigmoid', 'softmax', 'softplus', 'exponential']
+    timeToTrain = "Czas treningu"
     visualization_window = None
     tensorFlowInterface = None
     neuronDataContainer = None
     betterVisualizer = None
+    historyGraphWindow = None
+    lastEpochs = None
     neuronDataContainerDefaultData = [2, [1,1,1,1,1,1,1,1], ['Dense', 'Dense','Dense', 'Dense','Dense', 'Dense','Dense', 'Dense'], ['relu', 'relu','relu', 'relu','relu', 'relu','relu', 'relu']]
     maxNumberOfLayers = 8
 
     def __init__(self):
         self.tensorFlowInterface = TensorFlowInterface()
         self.outputVisualisationWindow = OutputVisualisationWindow()
+        self.historyGraphWindow = HistoryGraphWindow()
 
         with simple.window(self.window, width=600, height=300):
             core.add_text(self.simulationSetting)
@@ -40,9 +46,14 @@ class SettingsWindow(GenericWindow):
             core.add_button(self.createVisualization, callback=self.create_visualisation_callback)
             core.add_same_line()
             core.add_button(self.createOutputPrediction, callback=self.create_output_prediction)
+            core.add_same_line()
+            core.add_button(self.historyGraph, callback=self.create_history_graph)
             core.add_button(self.trainData, callback=self.execute_training_data)
             core.add_same_line()
+            core.add_slider_int(self.timeToTrain, default_value = 100, min_value=1, max_value=1000, width = 200)
+            core.add_same_line()
             core.add_checkbox(self.use2DInOut)
+
             core.add_slider_int(self.numberOfLayers, default_value=2, min_value=2, max_value=self.maxNumberOfLayers, callback=self.layer_slider_callback,  width = 200)
             for i in range(0, self.maxNumberOfLayers):
                 core.add_slider_int(self.layer + str(i), default_value=1, width = 200)
@@ -112,9 +123,10 @@ class SettingsWindow(GenericWindow):
             self.neuronDataContainer.listOfActivations[int(sender[-1])] = core.get_value(sender)
 
     def execute_training_data(self):
-        self.tensorFlowInterface.train_model_on_2D_data(self.importWindow.dataParsedIn, self.importWindow.dataParsedOut)
-
+        self.lastEpochs = self.tensorFlowInterface.train_model_on_2D_data(self.importWindow.dataParsedIn, self.importWindow.dataParsedOut, core.get_value(self.timeToTrain))
 
     def create_output_prediction(self):
         self.outputVisualisationWindow.create_output_graph(self.tensorFlowInterface)
 
+    def create_history_graph(self):
+        self.historyGraphWindow.display_history_graph(self.tensorFlowInterface.dumpedTrainedDataHistory, self.lastEpochs)

@@ -27,6 +27,7 @@ class ModelDataContainer:
 class TensorFlowInterface:
     model = None
     dumpedTrainedDataHistory = None
+    lastEpochs = None
     Xnew = None
 
     def __init__(self):
@@ -54,16 +55,19 @@ class TensorFlowInterface:
         # elif layerType == 'Conv2D':
         #     self.model.add(Conv2D(kernel_size=64, activation=activation))
 
-    def train_model_on_2D_data(self, trainDataIn, trainDataOut):
+    def train_model_on_2D_data(self, trainDataIn, trainDataOut, epochs):
         if self.model is None:
             return None
         else:
             self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             mergedInputArray = numpy.stack([trainDataIn[0], trainDataIn[1]], axis=1)
             mergedOutputArray = numpy.array(trainDataOut)
-            self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=500)
+            self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=epochs)
             accuracy = self.model.evaluate(x=mergedInputArray, y=mergedOutputArray)
-            print((self.dumpedTrainedDataHistory.history))
+            self.lastEpochs = epochs
+            return epochs
+            #print(self.lastEpochs)
+           #print((self.dumpedTrainedDataHistory.history))
 
     def predict_value(self, dataIn:[float]) -> float:
         x = self.model.predict(dataIn, batch_size=len(dataIn))

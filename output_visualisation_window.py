@@ -5,13 +5,15 @@ from tensor_flow_interface import TensorFlowInterface
 class OutputVisualisationWindow(GenericWindow):
     heatMapTable = [[]]
     windowName = 'Wizualizacja wyjscia'
+    learningGraph = 'Historia uczenia'
     plotName = 'Heatmap'
+    historyPlotName = 'Wykres historii uczenia'
     seriesName = 'Odpowiedz neuronow'
+
     def __init__(self):
         with simple.window(self.windowName, width=300, height=300):
             core.add_separator()
             core.add_plot(self.plotName)
-
 
     def create_output_graph(self, model:TensorFlowInterface):
         size = 300
@@ -30,3 +32,12 @@ class OutputVisualisationWindow(GenericWindow):
             temp2.append(temp[i][0])
 
         core.add_heat_series(self.plotName,name = self.seriesName, values=temp2, rows=size, columns=size, scale_min=0.0, scale_max=1.0, format='')
+
+    def display_history_graph(self, historyDict, numberOfEpochs):
+
+        with simple.window(self.learningGraph, width=300, height=300):
+            core.add_separator()
+            core.add_plot(self.historyPlotName)
+            xAxis = range(0, numberOfEpochs)
+            core.add_line_series(self.historyPlotName, "Dokładnosc", xAxis, historyDict['accuracy'])
+            core.add_line_series(self.historyPlotName, "Strata", xAxis, historyDict['loss'])
