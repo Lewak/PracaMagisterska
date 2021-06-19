@@ -13,11 +13,17 @@ class BetterVisualizer(GenericWindow):
     grey = [120, 120, 120, 255]
     white = [255, 255, 255, 255]
     containerData = None
+    xSize = 1086
+    ySize = 330
+    xPos = 408
+    yPos = 414
 
     def __init__(self):
-        with simple.window(self.windowName, width=self.width, height=self.height):
+
+        with simple.window(self.windowName, width=self.xSize, height=self.ySize, x_pos=self.xPos, y_pos=self.yPos):
                 core.add_drawing(self.drawingName, width=self.widthMax, height=self.heightMax)
                 core.set_resize_callback(callback=self.window_resize, handler=self.windowName)
+        super().__init__()
 
     def getContainerData(self, containerData: ModelDataContainer):
         self.containerData = containerData

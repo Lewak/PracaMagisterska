@@ -1,7 +1,6 @@
 #dada
 from dearpygui import core, simple
 from generic_window import GenericWindow
-from visualization_window import VisualizationWindow
 from tensor_flow_interface import TensorFlowInterface
 from tensor_flow_interface import ModelDataContainer
 from import_window import ImportWindow
@@ -10,7 +9,7 @@ from better_visualizer import BetterVisualizer
 from history_graph_window import HistoryGraphWindow
 
 class SettingsWindow(GenericWindow):
-    window = "Ustawienia sieci"
+    windowName = "Ustawienia sieci"
     simulationSetting = "Ustawienia symulacji"
     createNetwork = "Stworz siec"
     createVisualization = "Stworz wizualizacje sieci"
@@ -25,6 +24,10 @@ class SettingsWindow(GenericWindow):
     neuronTypeList = ['Dense', 'Flatten', 'Activation']
     neuronActivationList = ['relu', 'sigmoid', 'softmax', 'softplus', 'exponential']
     timeToTrain = "Czas treningu"
+    xSize = 708
+    ySize = 368
+    xPos = 800
+    yPos = 30
     visualization_window = None
     tensorFlowInterface = None
     neuronDataContainer = None
@@ -39,7 +42,7 @@ class SettingsWindow(GenericWindow):
         self.outputVisualisationWindow = OutputVisualisationWindow()
         self.historyGraphWindow = HistoryGraphWindow()
 
-        with simple.window(self.window, width=600, height=300):
+        with simple.window(self.windowName, width=self.xSize, height=self.ySize, x_pos=self.xPos, y_pos=self.yPos):
             core.add_text(self.simulationSetting)
             core.add_button(self.createNetwork, callback=self.create_network_callback)
             core.add_same_line()
@@ -50,7 +53,8 @@ class SettingsWindow(GenericWindow):
             core.add_button(self.historyGraph, callback=self.create_history_graph)
             core.add_button(self.trainData, callback=self.execute_training_data)
             core.add_same_line()
-            core.add_slider_int(self.timeToTrain, default_value = 100, min_value=1, max_value=1000, width = 200)
+            #core.add_slider_int(self.timeToTrain, default_value = 100, min_value=1, max_value=1000, width = 200)
+            core.add_input_int(self.timeToTrain, default_value=100, min_value=1, max_value=1000, width = 200)
             core.add_same_line()
             core.add_checkbox(self.use2DInOut)
 
@@ -72,6 +76,7 @@ class SettingsWindow(GenericWindow):
         self.neuronDataContainer = ModelDataContainer(self.neuronDataContainerDefaultData[0],self.neuronDataContainerDefaultData[1], self.neuronDataContainerDefaultData[2], self.neuronDataContainerDefaultData[3])
         self.modify_neuron_list()
         self.tensorFlowInterface.create_model(self.neuronDataContainer)
+        super().__init__()
 
     def modify_neuron_list(self):
         self.neuronDataContainer.numberOfLayers = core.get_value(self.numberOfLayers)
@@ -83,7 +88,11 @@ class SettingsWindow(GenericWindow):
         self.neuronDataContainer.listOfLayerNeurons[self.neuronDataContainer.numberOfLayers-1] = 1
 
     def create_network_callback(self):
-        print(core.get_value(self.numberOfLayers))
+        self.tensorFlowInterface.remove_model()
+        self.modify_neuron_list()
+        if core.get_value(self.use2DInOut):
+            self.setDefaultInOut()
+        self.tensorFlowInterface.create_model(self.neuronDataContainer)
 
     def create_visualisation_callback(self, sender, data):
         self.tensorFlowInterface.remove_model()
@@ -99,11 +108,6 @@ class SettingsWindow(GenericWindow):
             self.betterVisualizer.draw_visualisation()
 
         self.betterVisualizer.window_resize()
-
-        #     self.visualization_window.show_window()
-        #     self.visualization_window.update_picture()
-        # else:
-        #     self.visualization_window.update_alternative() #to jest durne, ale bez tego mam błąd którego nie da się zdebugować.
 
     def layer_slider_callback(self):
         for i in range(0, self.maxNumberOfLayers):
@@ -130,3 +134,17 @@ class SettingsWindow(GenericWindow):
 
     def create_history_graph(self):
         self.historyGraphWindow.display_history_graph(self.tensorFlowInterface.dumpedTrainedDataHistory, self.lastEpochs)
+
+    def reset_item(self, window):
+        simple.set_item_width(window.windowName, window.xSize)
+        simple.set_item_height(window.windowName, window.ySize)
+        simple.set_window_pos(window.windowName, window.xPos, window.yPos)
+
+    def reset_all(self):
+        self.reset_item(self)
+        self.reset_item(self.importWindow)
+        self.reset_item(self.betterVisualizer)
+        self.betterVisualizer.window_resize()
+        core.render_dearpygui_frame()
+        self.reset_item(self.historyGraphWindow)
+        self.reset_item(self.outputVisualisationWindow)

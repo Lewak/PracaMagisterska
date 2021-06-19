@@ -7,10 +7,12 @@ class VisualizationWindow(GenericWindow):
     picturePath = 'graph.png'
 
     def __init__(self):
+
         with simple.window(self.windowName):
             core.add_drawing(self.pictureName, width=1500, height=1500)
             core.draw_image(self.pictureName, self.picturePath, pmin=[0, 0], pmax=[700, 700])
             core.set_resize_callback(callback=self.window_resize, handler=self.windowName)
+        super().__init__()
 
     def window_resize(self):
         data = core.get_item_rect_size(self.windowName)

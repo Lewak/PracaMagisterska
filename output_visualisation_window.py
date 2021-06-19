@@ -9,11 +9,17 @@ class OutputVisualisationWindow(GenericWindow):
     plotName = 'Heatmap'
     historyPlotName = 'Wykres historii uczenia'
     seriesName = 'Odpowiedz neuronow'
+    xSize = 372
+    ySize = 376
+    xPos = 16
+    yPos = 396
 
     def __init__(self):
-        with simple.window(self.windowName, width=300, height=300):
+
+        with simple.window(self.windowName, width=self.xSize, height=self.ySize, x_pos=self.xPos, y_pos=self.yPos):
             core.add_separator()
             core.add_plot(self.plotName)
+        super().__init__()
 
     def create_output_graph(self, model:TensorFlowInterface):
         size = 300

@@ -8,8 +8,7 @@ from tensorflow import keras
 import tensorflow as tf
 from tensorflow.keras import layers
 import numpy
-
-
+import time
 class ModelDataContainer:
     numberOfLayers = None
     listOfLayerNeurons = None
@@ -62,14 +61,14 @@ class TensorFlowInterface:
             self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             mergedInputArray = numpy.stack([trainDataIn[0], trainDataIn[1]], axis=1)
             mergedOutputArray = numpy.array(trainDataOut)
+            start_time = time.time()
             self.dumpedTrainedDataHistory = self.model.fit(mergedInputArray, mergedOutputArray, epochs=epochs)
+            print("--- %s seconds ---" % (time.time() - start_time))
             accuracy = self.model.evaluate(x=mergedInputArray, y=mergedOutputArray)
             self.lastEpochs = epochs
             return epochs
-            #print(self.lastEpochs)
-           #print((self.dumpedTrainedDataHistory.history))
 
-    def predict_value(self, dataIn:[float]) -> float:
+    def predict_value(self, dataIn:[float]) -> []:
         x = self.model.predict(dataIn, batch_size=len(dataIn))
         return x
 

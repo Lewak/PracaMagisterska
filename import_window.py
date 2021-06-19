@@ -17,9 +17,13 @@ class ImportWindow(GenericWindow):
     importedFilePath = None
     importedFileName = None
     importedFile = None
+    xSize = 376
+    ySize = 356
+    xPos = 12
+    yPos = 26
 
     def __init__(self):
-        with simple.window(self.windowName,width=280, height=200):
+        with simple.window(self.windowName, width=self.xSize, height=self.ySize, x_pos=self.xPos, y_pos=self.yPos):
 
             core.add_button(self.importButtonName, callback=self.open_file_dialog)
             core.add_label_text(name=self.fileStatus, label='##'+self.fileMissing, default_value=self.fileMissing)
@@ -27,6 +31,7 @@ class ImportWindow(GenericWindow):
             core.add_separator()
             core.add_same_line()
             core.add_plot(self.plotName)
+        super().__init__()
 
     def open_file_dialog(self):
         core.open_file_dialog(callback=self.import_file)
