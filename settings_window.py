@@ -144,7 +144,5 @@ class SettingsWindow(GenericWindow):
         self.reset_item(self)
         self.reset_item(self.importWindow)
         self.reset_item(self.betterVisualizer)
-        self.betterVisualizer.window_resize()
-        core.render_dearpygui_frame()
         self.reset_item(self.historyGraphWindow)
         self.reset_item(self.outputVisualisationWindow)
